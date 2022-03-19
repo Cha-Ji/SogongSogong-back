@@ -7,6 +7,7 @@ import sogong.sogongSpring.dto.boardedit.EditPostCommentAuthDto
 import sogong.sogongSpring.dto.board.EntireCommentDto
 import sogong.sogongSpring.dto.board.EntirePostDto
 import sogong.sogongSpring.dto.boardedit.DeleteCommentDto
+import sogong.sogongSpring.entity.UserLoginEntity
 import sogong.sogongSpring.repository.EntireCommentRepository
 import sogong.sogongSpring.repository.EntirePostRepository
 import sogong.sogongSpring.repository.ScrapLikeRepository
@@ -28,56 +29,62 @@ class BoardEditService {
 
     ///////////////////////////////////////////////////////////////
     @Transactional
-    fun editAuth(editPostCommentAuthDto: EditPostCommentAuthDto) : Boolean{
-        val userAuth = userLoginRepository.findById(editPostCommentAuthDto.userId) //기본적으로 userid부터 조회해야 함
+    fun editAuth(editPostCommentAuthDto: EditPostCommentAuthDto) : Boolean {
+        val userAuth = userLoginRepository.findById(editPostCommentAuthDto.userId).get()
 
-        if(userAuth.isPresent){
-            if(editPostCommentAuthDto.commentId == null) { //글 수정 권한 조회일 경우
-                val postAuth = entirePostRepository.findByPostIdAndUserId(editPostCommentAuthDto.postId, userAuth.get())
-                return postAuth.isNotEmpty()
-            }
-            else{ //댓글 수정 권한 조회일 경우
-                val postAuth = entirePostRepository.findById(editPostCommentAuthDto.postId)
-                if(postAuth.isPresent){
-                    val commentAuth = entireCommentRepository.findByCommentIdAndUserIdAndPostId(
-                        editPostCommentAuthDto.commentId, userAuth.get(), postAuth.get()
-                    )
-                    return commentAuth.isNotEmpty()
-                }
-                else throw java.lang.IllegalArgumentException("Postid Error!!") //postid가 잘못 되었을 경우
-            }
-        }
-        else throw java.lang.IllegalArgumentException("Userid Error!!") //userid가 잘못 되었을 경우
+        if(isPresentUserId(editPostCommentAuthDto))
+            return editPostCommentAuthDto.commentId?.let {
+                canEditComment(editPostCommentAuthDto, userAuth)
+            } ?: canEditPost(editPostCommentAuthDto, userAuth)
+        //userid가 잘못 되었을 경우
+        else throw java.lang.IllegalArgumentException(ERROR_USER_ID)
+    }
+
+    private fun isPresentUserId(editPostCommentAuthDto: EditPostCommentAuthDto) =
+        userLoginRepository.findById(editPostCommentAuthDto.userId).isPresent
+
+    //글 수정 권한 조회일 경우
+    private fun canEditPost(editPostCommentAuthDto: EditPostCommentAuthDto, userAuth: UserLoginEntity) =
+        entirePostRepository.findByPostIdAndUserId(editPostCommentAuthDto.postId, userAuth).isNotEmpty()
+
+    //댓글 수정 권한 조회일 경우
+    private fun canEditComment(editPostCommentAuthDto: EditPostCommentAuthDto, userAuth: UserLoginEntity): Boolean {
+        val postAuth = entirePostRepository.findById(editPostCommentAuthDto.postId)
+
+        if(postAuth.isPresent) return entireCommentRepository.findByCommentIdAndUserIdAndPostId(
+            editPostCommentAuthDto.commentId!!,
+            userAuth,
+            postAuth.get()
+        ).isNotEmpty()
+        else throw java.lang.IllegalArgumentException(ERROR_POST_ID) //postid가 잘못 되었을 경우
     }
 
     ///////////////////////////////////////////////////////////////
     @Transactional
-    fun editPost(postId:Long, editPostDto:EntirePostDto){
-        val editPost = entirePostRepository.findById(postId).get()
-
-        editPost.subject = editPostDto.subject
-        editPost.content = editPostDto.content
-        editPost.date = LocalDateTime.now()
-        editPost.picture = editPostDto.picture
+    fun editPost(postId: Long, editPostDto: EntirePostDto) = with(entirePostRepository.findById(postId).get()) {
+        subject = editPostDto.subject
+        content = editPostDto.content
+        date = LocalDateTime.now()
+        picture = editPostDto.picture
         //공백 subject, content는 어떻게 처리?
     }
 
     @Transactional
-    fun editComment(commentId:Long, editCommentDto:EntireCommentDto){
-        val editComment = entireCommentRepository.findById(commentId).get()
-        editComment.date = LocalDateTime.now()
-        editComment.content = editCommentDto.content
-        //공백 content는 어떻게 처리?
-    }
+    fun editComment(commentId: Long, editCommentDto: EntireCommentDto) = with(entireCommentRepository.findById(commentId)
+        .get()) {
+            date = LocalDateTime.now()
+            content = editCommentDto.content
+            //공백 content는 어떻게 처리?
+        }
 
     @Transactional
-    fun deleteComment(deleteCommentDto: DeleteCommentDto){
+    fun deleteComment(deleteCommentDto: DeleteCommentDto) {
         if (entireCommentRepository.findById(deleteCommentDto.commmentId).get().postId.postId == deleteCommentDto.postId) {
             entireCommentRepository.deleteById(deleteCommentDto.commmentId)
-            val decreaseCount = entirePostRepository.findById(deleteCommentDto.postId).get()
-            decreaseCount.countComment = decreaseCount.countComment - 1
+            entirePostRepository.findById(deleteCommentDto.postId).get().countComment--
+        } else {
+            throw java.lang.IllegalArgumentException(ERROR_USER_ID)
         }
-        else throw java.lang.IllegalArgumentException("Userid Error!!")
     }
 
     @Transactional
@@ -92,6 +99,11 @@ class BoardEditService {
             deletecomment.forEach { i -> entireCommentRepository.delete(i) }
             entirePostRepository.deleteById(postId)
         }
-        else throw java.lang.IllegalArgumentException("PostId Error!!")
+        else throw java.lang.IllegalArgumentException(ERROR_POST_ID)
+    }
+
+    companion object {
+        const val ERROR_POST_ID = "PostId Error!!"
+        const val ERROR_USER_ID = "UserId Error!!"
     }
 }
