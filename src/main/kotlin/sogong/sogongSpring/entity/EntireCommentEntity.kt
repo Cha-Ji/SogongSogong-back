@@ -13,21 +13,21 @@ import javax.persistence.*
 data class EntireCommentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val commentId :Long? = null,
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name="userId",nullable = false)
-    val userId : UserLoginEntity,
+    val commentId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name="postId",nullable = false)
-    val postId : EntirePostEntity,
+    @JoinColumn(name = "userId", nullable = false)
+    val userId: UserLoginEntity,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "postId", nullable = false)
+    val postId: EntirePostEntity,
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    var date : LocalDateTime,
+    var date: LocalDateTime,
 
     @Column(nullable = false)
-    var content : String
+    var content: String
 )
