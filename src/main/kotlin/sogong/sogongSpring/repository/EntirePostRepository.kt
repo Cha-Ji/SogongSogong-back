@@ -11,11 +11,12 @@ import sogong.sogongSpring.entity.UserLoginEntity
 
 @Repository
 interface EntirePostRepository : JpaRepository<EntirePostEntity, Long> {
-    fun findByPostIdAndUserId(postId:Long, userId:UserLoginEntity):MutableList<EntirePostEntity>
+
+    fun findByPostIdAndUserId(postId: Long, userId: UserLoginEntity): MutableList<EntirePostEntity>
 
     @Query(value = "select * from ENTIRE_POST where countComment >= :countComment", nativeQuery = true)
-    fun findHotPost(@Param(value="countComment") countComment : Int, pageable: Pageable) : Page<EntirePostEntity>
+    fun findHotPost(@Param(value="countComment")countComment: Int, pageable: Pageable): Page<EntirePostEntity>
 
     @Query(value = "select * from ENTIRE_POST where countLike >= :countLike", nativeQuery = true)
-    fun findBestPost(@Param(value="countLike") countLike : Int, pageable: Pageable) : Page<EntirePostEntity>
+    fun findBestPost(@Param(value="countLike")countLike: Int, pageable: Pageable): Page<EntirePostEntity>
 }

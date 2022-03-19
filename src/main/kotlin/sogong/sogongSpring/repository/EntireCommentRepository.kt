@@ -10,9 +10,15 @@ import sogong.sogongSpring.entity.UserLoginEntity
 
 @Repository
 interface EntireCommentRepository : JpaRepository<EntireCommentEntity, Long> {
-    fun findByCommentIdAndUserIdAndPostId(commentId:Long, userId:UserLoginEntity, postId:EntirePostEntity) : List<EntireCommentEntity>
-    fun findByPostId(postId:EntirePostEntity) : List<EntireCommentEntity>
+
+    fun findByCommentIdAndUserIdAndPostId(
+        commentId: Long,
+        userId: UserLoginEntity,
+        postId: EntirePostEntity
+    ): List<EntireCommentEntity>
+
+    fun findByPostId(postId:EntirePostEntity): List<EntireCommentEntity>
 
     @Query(value = "select * from ENTIRE_COMMENT where postId = :postId", nativeQuery = true)
-    fun selectPost(@Param(value="postId") postId : Long) : MutableList<EntireCommentEntity>
+    fun selectPost(@Param(value="postId") postId : Long): MutableList<EntireCommentEntity>
 }
