@@ -4,10 +4,10 @@ import java.io.Serializable
 import java.time.LocalDateTime
 
 data class PrintEntirePostDto(
-    var postId : Long,
-    var userId : Long,
-    var subject : String,
-    var date : LocalDateTime,
-    var countComment:Int,
-    var countLike:Int
-):Serializable
+    var postId: Long,
+    var userId: Long,
+    var subject: String,
+    var date: LocalDateTime,
+    var countComment: Int,
+    var countLike: Int
+) : Serializable
