@@ -9,11 +9,11 @@ import javax.persistence.*
 data class HashtagDbEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val hashId : Long? = null,
+    val hashId: Long? = null,
 
     @Column(nullable = false, length = 45)
-    val hashName : String,
+    val hashName: String,
 
     @Column(nullable = false)
-    val category : Boolean
+    val category: Boolean
 )
