@@ -10,18 +10,18 @@ import javax.persistence.*
 data class ScrapLikeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val scrapId : Long? = null,
+    val scrapId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name="userId",nullable = false)
-    val userId : UserLoginEntity,
+    @JoinColumn(name = "userId", nullable = false)
+    val userId: UserLoginEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name="postId",nullable = false)
-    val postId : EntirePostEntity,
+    @JoinColumn(name = "postId", nullable = false)
+    val postId: EntirePostEntity,
 
     @Column(nullable = false, columnDefinition = "TINYINT", length = 1)
-    val category : Boolean
+    val category: Boolean
 )
