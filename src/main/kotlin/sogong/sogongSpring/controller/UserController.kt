@@ -11,11 +11,9 @@ import java.io.IOException
 
 @RestController
 @RequestMapping("/user")
-class UserController (var userService: UserService) {
+class UserController(var userService: UserService) {
 
     @GetMapping("/business")
     @Throws(IOException::class)
-    fun validateBusiness(@RequestBody businessAuthDto: BusinessAuthDto) : Boolean{
-        return userService.validateBusiness(businessAuthDto)
-    }
+    fun validateBusiness(@RequestBody businessAuthDto: BusinessAuthDto) = userService.validateBusiness(businessAuthDto)
 }
