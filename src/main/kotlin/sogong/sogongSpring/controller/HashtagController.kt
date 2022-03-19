@@ -10,42 +10,35 @@ import sogong.sogongSpring.service.HashtagService
 
 @RestController
 @RequestMapping("/hashtag")
-class HashtagController (var hashtagService: HashtagService){
+class HashtagController(val hashtagService: HashtagService) {
 
     @PostMapping("/post")
-    fun registPostHashtag(@RequestBody postHashtagDto: PostHashtagDto){
+    fun registPostHashtag(@RequestBody postHashtagDto: PostHashtagDto) {
         hashtagService.savePostHashtag(postHashtagDto)
     }
 
     @PostMapping("/user")
-    fun saveUserHashtag(@RequestBody userHashTagDto: UserHashTagDto){
+    fun saveUserHashtag(@RequestBody userHashTagDto: UserHashTagDto) {
         hashtagService.saveUserHashtag(userHashTagDto)
     }
 
     @PutMapping("/user")
-    fun editUserHashtag(@RequestBody userHashTagDto: UserHashTagDto){
+    fun editUserHashtag(@RequestBody userHashTagDto: UserHashTagDto) {
         hashtagService.editUserHashtag(userHashTagDto)
     }
 
     @PutMapping("/post")
-    fun editPostHashtag(@RequestBody postHashtagDto: PostHashtagDto){
+    fun editPostHashtag(@RequestBody postHashtagDto: PostHashtagDto) {
         hashtagService.editPostHashtag(postHashtagDto)
     }
 
     @GetMapping("/or-search")
-    fun searchPost(@RequestParam hashtag: List<String>) : List<EntirePostEntity>{
-        return hashtagService.searchOrPost(hashtag)
-    }
+    fun searchPost(@RequestParam hashtag: List<String>) = hashtagService.searchOrPost(hashtag)
 
     @GetMapping("/post/{postId}")
-    fun printPostHashtag(@PathVariable postId : Long) : List<String>{
-        return hashtagService.printPostHashtag(postId)
-    }
+    fun printPostHashtag(@PathVariable postId: Long) = hashtagService.printPostHashtag(postId)
 
     @GetMapping("/user/{userId}")
-    fun printUserHashtag(@PathVariable userId:Long, @RequestParam("group-id") groupId:Long) : List<UserHashtagEntity>{
-        return hashtagService.printUserHashtag(userId, groupId)
-    }
-
-
+    fun printUserHashtag(@PathVariable userId: Long, @RequestParam("group-id") groupId: Long)  =
+        hashtagService.printUserHashtag(userId, groupId)
 }
