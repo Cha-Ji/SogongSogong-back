@@ -9,13 +9,13 @@ import javax.persistence.*
 data class PostHashtagEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val postHashId : Long? = null,
+    val postHashId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashId", nullable = false)
-    var hashId : HashtagDbEntity,
+    var hashId: HashtagDbEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId", nullable = false)
-    val postId : EntirePostEntity
+    val postId: EntirePostEntity
 )
